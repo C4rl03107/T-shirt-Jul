@@ -1,61 +1,217 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="UTF-8">
-  <title>Catalogo T-shirt Jul</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JUL T-SHIRT - Catalogo</title>
+    <!-- Tailwind CSS per uno styling moderno e responsive -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts per un look streetwear accattivante -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <!-- Icone FontAwesome per i bottoni social e navigazione -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #0b0f19; /* Sfondo scuro ultra-moderno */
+            color: #f3f4f6;
+        }
+        /* Effetto sfocatura professionale per lo sfondo del popup */
+        .modal-backdrop {
+            backdrop-filter: blur(8px);
+        }
+    </style>
 </head>
-<body>
+<body class="min-h-screen flex flex-col justify-between">
 
-<h1>Catalogo T-shirt Jul</h1>
+    <!-- HEADER / INTESTAZIONE -->
+    <header class="border-b border-gray-800 bg-[#0b0f19]/80 backdrop-blur sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="text-center sm:text-left">
+                <h1 class="text-3xl font-black tracking-tight text-white mt-1">JUL <span class="text-emerald-500">T-SHIRT</span></h1>
+            </div>
+            
+            <!-- Link di contatto rapido -->
+            <div class="flex items-center gap-4 text-gray-400">
+                <a href="https://instagram.com" target="_blank" class="hover:text-pink-500 transition-colors text-xl" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                <a href="#" id="wa-general" class="hover:text-emerald-400 transition-colors text-xl" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+            </div>
+        </div>
+    </header>
 
-<div class="grid">
+    <!-- GRIGLIA PRODOTTI -->
+    <main class="max-w-7xl mx-auto px-4 py-8 flex-grow w-full">
+        <div id="products-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+            <!-- I prodotti verranno generati automaticamente via Javascript qui dentro -->
+        </div>
+    </main>
 
-<img src="Catalogo/1.jpeg">
-<img src="Catalogo/2.jpeg">
-<img src="Catalogo/3.jpeg">
-<img src="Catalogo/4.jpeg">
-<img src="Catalogo/5.jpeg">
-<img src="Catalogo/6.jpeg">
-<img src="Catalogo/7.jpeg">
-<img src="Catalogo/8.jpeg">
-<img src="Catalogo/9.jpeg">
-<img src="Catalogo/10.jpeg">
+    <!-- MODAL DETTAGLI / POPUP -->
+    <div id="product-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4">
+        <!-- Sfondo scuro e sfocato al clic del quale si chiude il popup -->
+        <div class="absolute inset-0 bg-black/70 modal-backdrop" onclick="closeModal()"></div>
+        
+        <!-- Finestra centrale del popup -->
+        <div class="bg-gray-900 border border-gray-800 rounded-3xl overflow-hidden max-w-lg w-full relative z-10 shadow-2xl animate-in fade-in zoom-in duration-200">
+            <button onclick="closeModal()" class="absolute top-4 right-4 bg-black/40 text-white hover:bg-black/80 w-10 h-10 rounded-full flex items-center justify-center transition-colors">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+            
+            <div class="p-6">
+                <!-- Immagine ingrandita del popup -->
+                <div class="aspect-square w-full rounded-2xl overflow-hidden bg-black flex items-center justify-center mb-6">
+                    <img id="modal-img" src="" alt="Dettaglio maglietta" class="max-h-full max-w-full object-contain">
+                </div>
+                
+                <!-- Informazioni del modello selezionato con prezzo fisso di 15€ -->
+                <h3 id="modal-title" class="text-2xl font-bold text-white mb-1">Nome Maglia</h3>
+                <div class="flex items-center gap-3 mb-4">
+                    <span class="text-xl font-extrabold text-emerald-400">€15,00</span>
+                    <span class="text-xs bg-gray-800 text-gray-400 px-2 py-1 rounded-md font-semibold">Disponibile</span>
+                </div>
+                
+                <!-- Selezione facilitata delle Taglie -->
+                <div class="mb-6">
+                    <label class="block text-xs uppercase tracking-wider text-gray-400 font-bold mb-2">Seleziona Taglia</label>
+                    <div class="flex gap-2">
+                        <button onclick="selectSize('S')" class="size-btn w-12 h-12 rounded-xl border border-gray-800 hover:border-emerald-500 font-bold flex items-center justify-center text-sm transition-all bg-gray-950 text-white">S</button>
+                        <button onclick="selectSize('M')" class="size-btn w-12 h-12 rounded-xl border border-gray-800 hover:border-emerald-500 font-bold flex items-center justify-center text-sm transition-all bg-gray-950 text-white">M</button>
+                        <button onclick="selectSize('L')" class="size-btn w-12 h-12 rounded-xl border border-gray-800 hover:border-emerald-500 font-bold flex items-center justify-center text-sm transition-all bg-gray-950 text-white">L</button>
+                        <button onclick="selectSize('XL')" class="size-btn w-12 h-12 rounded-xl border border-gray-800 hover:border-emerald-500 font-bold flex items-center justify-center text-sm transition-all bg-gray-950 text-white">XL</button>
+                    </div>
+                </div>
+                
+                <!-- Bottone per completare l'ordine personalizzato tramite WhatsApp -->
+                <button id="modal-order-btn" onclick="sendWhatsAppOrder()" class="w-full bg-emerald-500 hover:bg-emerald-400 text-black font-extrabold py-4 rounded-2xl flex items-center justify-center gap-3 text-base shadow-lg shadow-emerald-500/20 transition-all transform active:scale-95">
+                    <i class="fa-brands fa-whatsapp text-xl"></i>
+                    Ordina via WhatsApp
+                </button>
+            </div>
+        </div>
+    </div>
 
-<img src="Catalogo/11.jpeg">
-<img src="Catalogo/12.jpeg">
-<img src="Catalogo/13.jpeg">
-<img src="Catalogo/14.jpeg">
-<img src="Catalogo/15.jpeg">
-<img src="Catalogo/16.jpeg">
-<img src="Catalogo/17.jpeg">
-<img src="Catalogo/18.jpeg">
-<img src="Catalogo/19.jpeg">
-<img src="Catalogo/20.jpeg">
+    <!-- FOOTER -->
+    <footer class="border-t border-gray-900 bg-gray-950 py-8 text-center text-sm text-gray-500">
+        <p class="font-semibold text-gray-400">© 2026 JUL Streetwear. Tutti i diritti riservati.</p>
+        <p class="text-xs mt-1">Clicca sulle magliette per selezionare la taglia e ordinare subito su WhatsApp a €15,00.</p>
+    </footer>
 
-<img src="Catalogo/21.jpeg">
-<img src="Catalogo/22.jpeg">
-<img src="Catalogo/23.jpeg">
-<img src="Catalogo/24.jpeg">
-<img src="Catalogo/25.jpeg">
-<img src="Catalogo/26.jpeg">
-<img src="Catalogo/27.jpeg">
-<img src="Catalogo/28.jpeg">
-<img src="Catalogo/29.jpeg">
-<img src="Catalogo/30.jpeg">
+    <!-- LOGICA DI GENERAZIONE E COMPORTAMENTO -->
+    <script>
+        // CONFIGURAZIONE: Inserisci qui il tuo numero di telefono (con prefisso 39 senza spazi)
+        const WHATSAPP_NUMBER = "3286016570"; // <-- INSERISCI IL TUO NUMERO DI WHATSAPP QUI!
 
-<img src="Catalogo/31.jpeg">
-<img src="Catalogo/32.jpeg">
-<img src="Catalogo/33.jpeg">
-<img src="Catalogo/34.jpeg">
-<img src="Catalogo/35.jpeg">
-<img src="Catalogo/36.jpeg">
-<img src="Catalogo/37.jpeg">
-<img src="Catalogo/38.jpeg">
-<img src="Catalogo/39.jpeg">
-<img src="Catalogo/40.jpeg">
+        // Imposta il link del contatto generale WhatsApp nell'header
+        document.getElementById('wa-general').href = `https://wa.me/${WHATSAPP_NUMBER}?text=Ciao!%20Ho%20visto%20il%20catalogo%20JUL%20T-SHIRT%20e%20vorrei%20informazioni.`;
 
-</div>
+        // Generazione automatica dell'array di 40 magliette che pesca i file dentro la cartella Catalogo/
+        const products = [];
+        for (let i = 1; i <= 40; i++) {
+            products.push({
+                id: i,
+                name: `T-Shirt JUL #${i}`,
+                image: `Catalogo/${i}.jpeg`, // Cerca le immagini dentro la tua cartella Catalogo
+                price: "15,00"
+            });
+        }
 
+        // Variabili globali per memorizzare le scelte dell'utente nel popup
+        let selectedProduct = null;
+        let selectedSizeVal = null;
+
+        // Renderizza dinamicamente tutti i 40 prodotti nella griglia principale
+        function renderProducts(items) {
+            const grid = document.getElementById('products-grid');
+            grid.innerHTML = '';
+            
+            items.forEach(product => {
+                const card = document.createElement('div');
+                card.className = "group bg-gray-900/40 rounded-3xl border border-gray-800 overflow-hidden cursor-pointer hover:border-gray-700 transition-all duration-300 transform hover:-translate-y-1 shadow-md";
+                card.onclick = () => openModal(product);
+                
+                card.innerHTML = `
+                    <div class="aspect-[4/5] w-full overflow-hidden bg-black flex items-center justify-center relative">
+                        <img src="${product.image}" alt="${product.name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" onerror="this.onerror=null; this.src='https://placehold.co/400x500/111827/FFFFFF?text=Modello+${product.id}';">
+                        <div class="absolute top-3 right-3 bg-black/60 backdrop-blur text-emerald-400 text-xs font-black px-2.5 py-1.5 rounded-full border border-emerald-500/20">
+                            €${product.price}
+                        </div>
+                    </div>
+                    <div class="p-4 flex items-center justify-between gap-2">
+                        <div>
+                            <h4 class="font-extrabold text-sm sm:text-base text-white group-hover:text-emerald-400 transition-colors line-clamp-1">${product.name}</h4>
+                            <p class="text-xs text-gray-500 mt-0.5">Disponibile</p>
+                        </div>
+                        <div class="w-8 h-8 rounded-full bg-gray-800 group-hover:bg-emerald-500 group-hover:text-black flex items-center justify-center text-gray-400 transition-all text-xs">
+                            <i class="fa-solid fa-plus"></i>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // Mostra a schermo l'intero catalogo senza alcun filtro
+        renderProducts(products);
+
+        // Funzione di apertura del Popup dettagli
+        function openModal(product) {
+            selectedProduct = product;
+            selectedSizeVal = null; // Resetta la taglia ogni volta che si apre un nuovo articolo
+            
+            // Ripristina l'aspetto iniziale non selezionato dei bottoni taglia
+            document.querySelectorAll('.size-btn').forEach(btn => {
+                btn.className = "size-btn w-12 h-12 rounded-xl border border-gray-800 hover:border-emerald-500 font-bold flex items-center justify-center text-sm transition-all bg-gray-950 text-white";
+            });
+
+            // Carica i dati del prodotto selezionato all'interno del popup
+            document.getElementById('modal-img').src = product.image;
+            document.getElementById('modal-title').textContent = product.name;
+            
+            // Mostra visivamente il popup
+            document.getElementById('product-modal').classList.remove('hidden');
+            document.body.classList.add('overflow-hidden');
+        }
+
+        // Funzione di chiusura del Popup dettagli
+        function closeModal() {
+            document.getElementById('product-modal').classList.add('hidden');
+            document.body.classList.remove('overflow-hidden');
+        }
+
+        // Gestione grafica della selezione taglia nel popup
+        function selectSize(size) {
+            selectedSizeVal = size;
+            
+            document.querySelectorAll('.size-btn').forEach(btn => {
+                if(btn.textContent === size) {
+                    btn.className = "size-btn w-12 h-12 rounded-xl border-2 border-emerald-500 font-black flex items-center justify-center text-sm transition-all bg-emerald-500/10 text-emerald-400";
+                } else {
+                    btn.className = "size-btn w-12 h-12 rounded-xl border border-gray-800 hover:border-emerald-500 font-bold flex items-center justify-center text-sm transition-all bg-gray-950 text-white";
+                }
+            });
+        }
+
+        // Genera il link d'ordine WhatsApp con testo precompilato e invia l'utente
+        function sendWhatsAppOrder() {
+            if (!selectedProduct) return;
+            
+            let message = `Ciao! Vorrei ordinare la maglietta: *${selectedProduct.name}* (Modello #${selectedProduct.id})`;
+            
+            if (selectedSizeVal) {
+                message += ` nella taglia *${selectedSizeVal}*`;
+            } else {
+                message += `. Potresti dirmi quali taglie sono disponibili?`;
+            }
+            
+            message += `\nPrezzo: €${selectedProduct.price}`;
+            message += `\n\nLink catalogo: ${window.location.origin}${window.location.pathname}`;
+
+            const waUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+            window.open(waUrl, '_blank');
+        }
+    </script>
 </body>
 </html>
