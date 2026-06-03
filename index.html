@@ -160,33 +160,31 @@
     <!-- LOGICA DI GENERAZIONE E COMPORTAMENTO -->
     <script>
         // ==========================================
-        //  CONFIGURAZIONE SITO (Modifica solo qui!)
+        //  CONFIGURAZIONE SITO
         // ==========================================
         const CONFIG = {
-            whatsappNumber: "393286016570", // <-- NUMERO DI WHATSAPP CONFIGURATO!
-            instagramUser: "carlo.mezzotero", // <-- ACCOUNT INSTAGRAM CONFIGURATO!
-            price: "15,00",                   // <-- PREZZO FISSO DI OGNI T-SHIRT
-            totalProducts: 40                 // <-- NUMERO TOTALE DI MAGLIE NEL CATALOGO
+            whatsappNumber: "393286016570", // <-- Il tuo numero WhatsApp
+            instagramUser: "carlo.mezzotero", // <-- Il tuo account Instagram
+            price: "15,00",                   // <-- Prezzo fisso
+            totalProducts: 46                 // <-- Totale maglie (fino alla nuova 46!)
         };
 
         // ==========================================
         //  MAPPA IMMAGINI MULTIPLE (Fronte e Retro)
         // ==========================================
-        // Qui definiamo quali magliette hanno più di un'immagine.
-        // Ad esempio la maglia #31 include anche l'immagine 32.
+        // Definiamo quali magliette hanno più di un'immagine associata con la tua nuova nomenclatura (A per davanti, D per dietro)
         const MULTI_IMAGE_PRODUCTS = {
-            31: [31, 32] // Significa: La maglietta #31 mostra le foto "31.jpeg" e "32.jpeg"
-            // Se in futuro avrai altre doppie foto (es. 35 e 36), ti basterà aggiungere qui:
-            // , 35: [35, 36]
+            31: ["31A", "31D"],
+            33: ["33A", "33D"],
+            34: ["34A", "34D"],
+            42: ["42A", "42D"],
+            43: ["43A", "43D"]
         };
 
-        // Calcola automaticamente quali immagini secondarie nascondere dalla griglia principale
-        // (La 32 viene nascosta perché è già integrata dentro la card della 31!)
-        const hiddenProductIds = new Set();
-        Object.values(MULTI_IMAGE_PRODUCTS).forEach(idsArray => {
-            // Prende tutti i numeri tranne il primo (che è quello principale) e li segna come nascosti
-            idsArray.slice(1).forEach(id => hiddenProductIds.add(id));
-        });
+        // Lista degli ID da nascondere/escludere dalla griglia principale
+        // - Escludiamo la maglia 25 (che abbiamo eliminato)
+        // - Escludiamo la maglia 32 (perché la 31 usa ora 31A e 31D!)
+        const EXCLUDED_IDS = new Set([25, 32]);
 
         // Applicazione automatica dei dati configurati ai link di intestazione
         document.getElementById('wa-general').href = `https://wa.me/${CONFIG.whatsappNumber}?text=Ciao!%20Ho%20visto%20il%20catalogo%20JUL%20T-SHIRT%20e%20vorrei%20informazioni.`;
@@ -196,14 +194,15 @@
         // Generazione dinamica dei prodotti
         const products = [];
         for (let i = 1; i <= CONFIG.totalProducts; i++) {
-            // Se questo ID fa parte di un'immagine di "retro" (es. la 32), non creare un prodotto separato
-            if (hiddenProductIds.has(i)) continue;
+            // Salta i modelli eliminati o integrati altrove (come il 25 e il 32)
+            if (EXCLUDED_IDS.has(i)) continue;
 
             let productImages = [];
             if (MULTI_IMAGE_PRODUCTS[i]) {
-                // Genera la lista delle immagini collegate (es. ["Catalogo/31.jpeg", "Catalogo/32.jpeg"])
-                productImages = MULTI_IMAGE_PRODUCTS[i].map(id => `Catalogo/${id}.jpeg`);
+                // Se la maglia ha immagini multiple, prende i nomi definiti nella mappa (es. 31A, 31D)
+                productImages = MULTI_IMAGE_PRODUCTS[i].map(name => `Catalogo/${name}.jpeg`);
             } else {
+                // Altrimenti prende la foto singola standard (es. Catalogo/1.jpeg)
                 productImages = [`Catalogo/${i}.jpeg`];
             }
 
@@ -325,7 +324,7 @@
             // Imposta la sorgente dell'immagine corrente
             imgElement.src = selectedProduct.images[currentSlideIndex];
 
-            // Se c'è solo 1 immagine, nascondi frecce e palliniindicatori
+            // Se c'è solo 1 immagine, nascondi frecce e pallini indicatori
             if (selectedProduct.images.length <= 1) {
                 prevBtn.classList.add('hidden');
                 nextBtn.classList.add('hidden');
@@ -383,6 +382,7 @@
         }
 
         // Genera il link d'ordine WhatsApp con testo precompilato e apre la chat
+        // Include un link specifico per mostrare l'immagine al venditore!
         function sendWhatsAppOrder() {
             if (!selectedProduct) return;
             
