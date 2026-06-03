@@ -18,10 +18,29 @@
             font-family: 'Plus Jakarta Sans', sans-serif;
             background-color: #0b0f19; /* Sfondo scuro ultra-moderno */
             color: #f3f4f6;
+            -webkit-tap-highlight-color: transparent;
         }
         /* Effetto sfocatura professionale per lo sfondo del popup */
         .modal-backdrop {
             backdrop-filter: blur(8px);
+        }
+        /* Rimuove l'outline brutto sui pulsanti */
+        button:focus {
+            outline: none;
+        }
+        /* Scrollbar personalizzata e scura */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0b0f19;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1f2937;
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #10b981;
         }
     </style>
 </head>
@@ -34,18 +53,39 @@
                 <h1 class="text-3xl font-black tracking-tight text-white mt-1">JUL <span class="text-emerald-500">T-SHIRT</span></h1>
             </div>
             
-            <!-- Link di contatto rapido -->
-            <div class="flex items-center gap-4 text-gray-400">
-                <a href="https://instagram.com" target="_blank" class="hover:text-pink-500 transition-colors text-xl" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
-                <a href="#" id="wa-general" class="hover:text-emerald-400 transition-colors text-xl" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+            <!-- Link di contatto rapido social -->
+            <div class="flex items-center gap-5 text-gray-400">
+                <a id="insta-link" href="#" target="_blank" class="hover:text-pink-500 transition-colors text-2xl" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                <a id="wa-general" href="#" target="_blank" class="hover:text-emerald-400 transition-colors text-2xl" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
             </div>
         </div>
     </header>
+
+    <!-- STRUMENTI DI NAVIGAZIONE (RICERCA) -->
+    <section class="max-w-7xl mx-auto px-4 pt-8 w-full">
+        <div class="relative max-w-md mx-auto">
+            <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-500">
+                <i class="fa-solid fa-magnifying-glass"></i>
+            </span>
+            <input 
+                type="text" 
+                id="search-input" 
+                placeholder="Cerca per numero (es. 31)..." 
+                class="w-full bg-gray-900/60 border border-gray-800 rounded-2xl py-3.5 pl-11 pr-4 text-sm text-white placeholder-gray-500 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all outline-none"
+                oninput="filterProducts()"
+            >
+        </div>
+    </section>
 
     <!-- GRIGLIA PRODOTTI -->
     <main class="max-w-7xl mx-auto px-4 py-8 flex-grow w-full">
         <div id="products-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
             <!-- I prodotti verranno generati automaticamente via Javascript qui dentro -->
+        </div>
+        <!-- Messaggio di nessun risultato nella ricerca -->
+        <div id="no-results" class="hidden text-center py-12 text-gray-500">
+            <i class="fa-solid fa-shirt text-4xl mb-3 block"></i>
+            Nessuna maglietta trovata con questo numero.
         </div>
     </main>
 
@@ -56,38 +96,56 @@
         
         <!-- Finestra centrale del popup -->
         <div class="bg-gray-900 border border-gray-800 rounded-3xl overflow-hidden max-w-lg w-full relative z-10 shadow-2xl animate-in fade-in zoom-in duration-200">
-            <button onclick="closeModal()" class="absolute top-4 right-4 bg-black/40 text-white hover:bg-black/80 w-10 h-10 rounded-full flex items-center justify-center transition-colors">
+            <button onclick="closeModal()" class="absolute top-4 right-4 bg-black/45 text-white hover:bg-black/85 w-10 h-10 rounded-full flex items-center justify-center transition-colors z-35">
                 <i class="fa-solid fa-xmark text-lg"></i>
             </button>
             
-            <div class="p-6">
-                <!-- Immagine ingrandita del popup -->
-                <div class="aspect-square w-full rounded-2xl overflow-hidden bg-black flex items-center justify-center mb-6">
-                    <img id="modal-img" src="" alt="Dettaglio maglietta" class="max-h-full max-w-full object-contain">
+            <div class="p-5 sm:p-6">
+                <!-- Immagine/Carousel del popup -->
+                <div id="modal-img-container" class="aspect-square w-full rounded-2xl overflow-hidden bg-black flex items-center justify-center mb-5 relative group">
+                    <!-- Immagine corrente del carousel -->
+                    <img id="modal-img" src="" alt="Dettaglio maglietta" class="max-h-full max-w-full object-contain select-none transition-all duration-300">
+                    
+                    <!-- Pulsanti di Navigazione Carousel (Nascondibili via JS se c'è solo 1 immagine) -->
+                    <button id="carousel-prev" onclick="prevImage()" class="absolute left-3 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-emerald-500 hover:text-black text-white w-10 h-10 rounded-full flex items-center justify-center transition-all active:scale-90" aria-label="Immagine precedente">
+                        <i class="fa-solid fa-chevron-left text-sm"></i>
+                    </button>
+                    <button id="carousel-next" onclick="nextImage()" class="absolute right-3 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-emerald-500 hover:text-black text-white w-10 h-10 rounded-full flex items-center justify-center transition-all active:scale-90" aria-label="Immagine successiva">
+                        <i class="fa-solid fa-chevron-right text-sm"></i>
+                    </button>
+                    
+                    <!-- Indicatori a pallino inferiori (Dots) -->
+                    <div id="carousel-dots" class="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 bg-black/40 backdrop-blur px-2.5 py-1.5 rounded-full">
+                        <!-- Generati dinamicamente -->
+                    </div>
                 </div>
                 
-                <!-- Informazioni del modello selezionato con prezzo fisso di 15€ -->
+                <!-- Informazioni del modello selezionato -->
                 <h3 id="modal-title" class="text-2xl font-bold text-white mb-1">Nome Maglia</h3>
                 <div class="flex items-center gap-3 mb-4">
-                    <span class="text-xl font-extrabold text-emerald-400">€15,00</span>
-                    <span class="text-xs bg-gray-800 text-gray-400 px-2 py-1 rounded-md font-semibold">Disponibile</span>
+                    <span id="modal-price" class="text-xl font-extrabold text-emerald-400">€15,00</span>
+                    <span class="text-xs bg-emerald-500/10 text-emerald-400 px-2.5 py-1 rounded-md font-semibold border border-emerald-500/10">Disponibile</span>
                 </div>
                 
-                <!-- Selezione facilitata delle Taglie -->
-                <div class="mb-6">
+                <!-- Selezione facilitata delle Taglie (Griglia 4x2 fantastica per mobile) -->
+                <div class="mb-5">
                     <label class="block text-xs uppercase tracking-wider text-gray-400 font-bold mb-2">Seleziona Taglia</label>
-                    <div class="flex gap-2">
-                        <button onclick="selectSize('S')" class="size-btn w-12 h-12 rounded-xl border border-gray-800 hover:border-emerald-500 font-bold flex items-center justify-center text-sm transition-all bg-gray-950 text-white">S</button>
-                        <button onclick="selectSize('M')" class="size-btn w-12 h-12 rounded-xl border border-gray-800 hover:border-emerald-500 font-bold flex items-center justify-center text-sm transition-all bg-gray-950 text-white">M</button>
-                        <button onclick="selectSize('L')" class="size-btn w-12 h-12 rounded-xl border border-gray-800 hover:border-emerald-500 font-bold flex items-center justify-center text-sm transition-all bg-gray-950 text-white">L</button>
-                        <button onclick="selectSize('XL')" class="size-btn w-12 h-12 rounded-xl border border-gray-800 hover:border-emerald-500 font-bold flex items-center justify-center text-sm transition-all bg-gray-950 text-white">XL</button>
+                    <div class="grid grid-cols-4 gap-2" id="sizes-container">
+                        <button onclick="selectSize('XXS')" class="size-btn py-2.5 rounded-xl border border-gray-800 hover:border-emerald-500 font-bold flex items-center justify-center text-xs transition-all bg-gray-950 text-white">XXS</button>
+                        <button onclick="selectSize('XS')" class="size-btn py-2.5 rounded-xl border border-gray-800 hover:border-emerald-500 font-bold flex items-center justify-center text-xs transition-all bg-gray-950 text-white">XS</button>
+                        <button onclick="selectSize('S')" class="size-btn py-2.5 rounded-xl border border-gray-800 hover:border-emerald-500 font-bold flex items-center justify-center text-xs transition-all bg-gray-950 text-white">S</button>
+                        <button onclick="selectSize('M')" class="size-btn py-2.5 rounded-xl border border-gray-800 hover:border-emerald-500 font-bold flex items-center justify-center text-xs transition-all bg-gray-950 text-white">M</button>
+                        <button onclick="selectSize('L')" class="size-btn py-2.5 rounded-xl border border-gray-800 hover:border-emerald-500 font-bold flex items-center justify-center text-xs transition-all bg-gray-950 text-white">L</button>
+                        <button onclick="selectSize('XL')" class="size-btn py-2.5 rounded-xl border border-gray-800 hover:border-emerald-500 font-bold flex items-center justify-center text-xs transition-all bg-gray-950 text-white">XL</button>
+                        <button onclick="selectSize('2XL')" class="size-btn py-2.5 rounded-xl border border-gray-800 hover:border-emerald-500 font-bold flex items-center justify-center text-xs transition-all bg-gray-950 text-white">2XL</button>
+                        <button onclick="selectSize('3XL')" class="size-btn py-2.5 rounded-xl border border-gray-800 hover:border-emerald-500 font-bold flex items-center justify-center text-xs transition-all bg-gray-950 text-white">3XL</button>
                     </div>
                 </div>
                 
                 <!-- Bottone per completare l'ordine personalizzato tramite WhatsApp -->
                 <button id="modal-order-btn" onclick="sendWhatsAppOrder()" class="w-full bg-emerald-500 hover:bg-emerald-400 text-black font-extrabold py-4 rounded-2xl flex items-center justify-center gap-3 text-base shadow-lg shadow-emerald-500/20 transition-all transform active:scale-95">
                     <i class="fa-brands fa-whatsapp text-xl"></i>
-                    Ordina via WhatsApp
+                    <span id="btn-order-text">Ordina via WhatsApp</span>
                 </button>
             </div>
         </div>
@@ -96,55 +154,110 @@
     <!-- FOOTER -->
     <footer class="border-t border-gray-900 bg-gray-950 py-8 text-center text-sm text-gray-500">
         <p class="font-semibold text-gray-400">© 2026 JUL Streetwear. Tutti i diritti riservati.</p>
-        <p class="text-xs mt-1">Clicca sulle magliette per selezionare la taglia e ordinare subito su WhatsApp a €15,00.</p>
+        <p class="text-xs mt-1">Clicca sulle magliette per selezionare la taglia e ordinare subito su WhatsApp.</p>
     </footer>
 
     <!-- LOGICA DI GENERAZIONE E COMPORTAMENTO -->
     <script>
-        // CONFIGURAZIONE: Inserisci qui il tuo numero di telefono (con prefisso 39 senza spazi)
-        const WHATSAPP_NUMBER = "393286016570"; // <-- INSERISCI IL TUO NUMERO DI WHATSAPP QUI!
+        // ==========================================
+        //  CONFIGURAZIONE SITO (Modifica solo qui!)
+        // ==========================================
+        const CONFIG = {
+            whatsappNumber: "393286016570", // <-- NUMERO DI WHATSAPP CONFIGURATO!
+            instagramUser: "carlo.mezzotero", // <-- ACCOUNT INSTAGRAM CONFIGURATO!
+            price: "15,00",                   // <-- PREZZO FISSO DI OGNI T-SHIRT
+            totalProducts: 40                 // <-- NUMERO TOTALE DI MAGLIE NEL CATALOGO
+        };
 
-        // Imposta il link del contatto generale WhatsApp nell'header
-        document.getElementById('wa-general').href = `https://wa.me/${WHATSAPP_NUMBER}?text=Ciao!%20Ho%20visto%20il%20catalogo%20JUL%20T-SHIRT%20e%20vorrei%20informazioni.`;
+        // ==========================================
+        //  MAPPA IMMAGINI MULTIPLE (Fronte e Retro)
+        // ==========================================
+        // Qui definiamo quali magliette hanno più di un'immagine.
+        // Ad esempio la maglia #31 include anche l'immagine 32.
+        const MULTI_IMAGE_PRODUCTS = {
+            31: [31, 32] // Significa: La maglietta #31 mostra le foto "31.jpeg" e "32.jpeg"
+            // Se in futuro avrai altre doppie foto (es. 35 e 36), ti basterà aggiungere qui:
+            // , 35: [35, 36]
+        };
 
-        // Generazione automatica dell'array di 40 magliette che pesca i file dentro la cartella Catalogo/
+        // Calcola automaticamente quali immagini secondarie nascondere dalla griglia principale
+        // (La 32 viene nascosta perché è già integrata dentro la card della 31!)
+        const hiddenProductIds = new Set();
+        Object.values(MULTI_IMAGE_PRODUCTS).forEach(idsArray => {
+            // Prende tutti i numeri tranne il primo (che è quello principale) e li segna come nascosti
+            idsArray.slice(1).forEach(id => hiddenProductIds.add(id));
+        });
+
+        // Applicazione automatica dei dati configurati ai link di intestazione
+        document.getElementById('wa-general').href = `https://wa.me/${CONFIG.whatsappNumber}?text=Ciao!%20Ho%20visto%20il%20catalogo%20JUL%20T-SHIRT%20e%20vorrei%20informazioni.`;
+        document.getElementById('insta-link').href = `https://instagram.com/${CONFIG.instagramUser}`;
+        document.getElementById('modal-price').textContent = `€${CONFIG.price}`;
+
+        // Generazione dinamica dei prodotti
         const products = [];
-        for (let i = 1; i <= 40; i++) {
+        for (let i = 1; i <= CONFIG.totalProducts; i++) {
+            // Se questo ID fa parte di un'immagine di "retro" (es. la 32), non creare un prodotto separato
+            if (hiddenProductIds.has(i)) continue;
+
+            let productImages = [];
+            if (MULTI_IMAGE_PRODUCTS[i]) {
+                // Genera la lista delle immagini collegate (es. ["Catalogo/31.jpeg", "Catalogo/32.jpeg"])
+                productImages = MULTI_IMAGE_PRODUCTS[i].map(id => `Catalogo/${id}.jpeg`);
+            } else {
+                productImages = [`Catalogo/${i}.jpeg`];
+            }
+
             products.push({
                 id: i,
                 name: `T-Shirt JUL #${i}`,
-                image: `Catalogo/${i}.jpeg`, // Cerca le immagini dentro la tua cartella Catalogo
-                price: "15,00"
+                images: productImages,
+                price: CONFIG.price
             });
         }
 
-        // Variabili globali per memorizzare le scelte dell'utente nel popup
+        // Variabili globali di stato
         let selectedProduct = null;
         let selectedSizeVal = null;
+        let currentSlideIndex = 0;
 
-        // Renderizza dinamicamente tutti i 40 prodotti nella griglia principale
+        // Renderizza dinamicamente tutti i prodotti nella griglia principale
         function renderProducts(items) {
             const grid = document.getElementById('products-grid');
+            const noResults = document.getElementById('no-results');
             grid.innerHTML = '';
+            
+            if (items.length === 0) {
+                noResults.classList.remove('hidden');
+            } else {
+                noResults.classList.add('hidden');
+            }
             
             items.forEach(product => {
                 const card = document.createElement('div');
-                card.className = "group bg-gray-900/40 rounded-3xl border border-gray-800 overflow-hidden cursor-pointer hover:border-gray-700 transition-all duration-300 transform hover:-translate-y-1 shadow-md";
+                card.className = "group bg-gray-900/40 rounded-3xl border border-gray-800 overflow-hidden cursor-pointer hover:border-gray-700 transition-all duration-300 transform hover:-translate-y-1 shadow-md relative";
                 card.onclick = () => openModal(product);
                 
+                // Se il prodotto ha più di una foto, mostriamo un badge indicatore
+                const multiImageBadge = product.images.length > 1 
+                    ? `<div class="absolute bottom-3 left-3 bg-black/75 backdrop-blur text-white text-[10px] font-bold px-2 py-1 rounded-lg border border-gray-800 flex items-center gap-1.5">
+                            <i class="fa-solid fa-images"></i> ${product.images.length} Foto
+                       </div>` 
+                    : '';
+
                 card.innerHTML = `
                     <div class="aspect-[4/5] w-full overflow-hidden bg-black flex items-center justify-center relative">
-                        <img src="${product.image}" alt="${product.name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" onerror="this.onerror=null; this.src='https://placehold.co/400x500/111827/FFFFFF?text=Modello+${product.id}';">
+                        <img src="${product.images[0]}" alt="${product.name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" onerror="this.onerror=null; this.src='https://placehold.co/400x500/111827/FFFFFF?text=Modello+${product.id}';">
                         <div class="absolute top-3 right-3 bg-black/60 backdrop-blur text-emerald-400 text-xs font-black px-2.5 py-1.5 rounded-full border border-emerald-500/20">
                             €${product.price}
                         </div>
+                        ${multiImageBadge}
                     </div>
                     <div class="p-4 flex items-center justify-between gap-2">
                         <div>
                             <h4 class="font-extrabold text-sm sm:text-base text-white group-hover:text-emerald-400 transition-colors line-clamp-1">${product.name}</h4>
                             <p class="text-xs text-gray-500 mt-0.5">Disponibile</p>
                         </div>
-                        <div class="w-8 h-8 rounded-full bg-gray-800 group-hover:bg-emerald-500 group-hover:text-black flex items-center justify-center text-gray-400 transition-all text-xs">
+                        <div class="w-8 h-8 rounded-full bg-gray-800 group-hover:bg-emerald-500 group-hover:text-black flex items-center justify-center text-gray-400 transition-all text-xs flex-shrink-0">
                             <i class="fa-solid fa-plus"></i>
                         </div>
                     </div>
@@ -153,26 +266,97 @@
             });
         }
 
-        // Mostra a schermo l'intero catalogo senza alcun filtro
+        // Mostra a schermo l'intero catalogo all'inizio
         renderProducts(products);
+
+        // Funzione per filtrare i prodotti in tempo reale tramite la barra di ricerca
+        function filterProducts() {
+            const query = document.getElementById('search-input').value.trim();
+            if (query === '') {
+                renderProducts(products);
+                return;
+            }
+            
+            // Filtra per ID numerico o per nome completo
+            const filtered = products.filter(p => {
+                return p.id.toString() === query || p.name.toLowerCase().includes(query.toLowerCase());
+            });
+            renderProducts(filtered);
+        }
+
+        // ==========================================
+        //  LOGICA POPUP E SLIDER IMMAGINI (CAROUSEL)
+        // ==========================================
 
         // Funzione di apertura del Popup dettagli
         function openModal(product) {
             selectedProduct = product;
-            selectedSizeVal = null; // Resetta la taglia ogni volta che si apre un nuovo articolo
+            selectedSizeVal = null; // Resetta la taglia ad ogni nuova apertura
+            currentSlideIndex = 0;  // Riparte sempre dalla prima immagine
             
-            // Ripristina l'aspetto iniziale non selezionato dei bottoni taglia
+            // Ripristina l'aspetto iniziale non selezionato di tutti i pulsanti taglia
             document.querySelectorAll('.size-btn').forEach(btn => {
-                btn.className = "size-btn w-12 h-12 rounded-xl border border-gray-800 hover:border-emerald-500 font-bold flex items-center justify-center text-sm transition-all bg-gray-950 text-white";
+                btn.className = "size-btn py-2.5 rounded-xl border border-gray-800 hover:border-emerald-500 font-bold flex items-center justify-center text-xs transition-all bg-gray-950 text-white";
             });
 
-            // Carica i dati del prodotto selezionato all'interno del popup
-            document.getElementById('modal-img').src = product.image;
+            // Resetta il testo originale del bottone WhatsApp
+            document.getElementById('btn-order-text').textContent = "Ordina via WhatsApp";
+
+            // Imposta titolo del prodotto nel popup
             document.getElementById('modal-title').textContent = product.name;
             
-            // Mostra visivamente il popup
+            // Aggiorna lo Slider con l'immagine corrente
+            updateCarousel();
+
+            // Mostra il popup con un'animazione fluida
             document.getElementById('product-modal').classList.remove('hidden');
             document.body.classList.add('overflow-hidden');
+        }
+
+        // Aggiorna l'immagine visibile all'interno del Modal e gestisce i controlli
+        function updateCarousel() {
+            if (!selectedProduct) return;
+
+            const imgElement = document.getElementById('modal-img');
+            const prevBtn = document.getElementById('carousel-prev');
+            const nextBtn = document.getElementById('carousel-next');
+            const dotsContainer = document.getElementById('carousel-dots');
+
+            // Imposta la sorgente dell'immagine corrente
+            imgElement.src = selectedProduct.images[currentSlideIndex];
+
+            // Se c'è solo 1 immagine, nascondi frecce e palliniindicatori
+            if (selectedProduct.images.length <= 1) {
+                prevBtn.classList.add('hidden');
+                nextBtn.classList.add('hidden');
+                dotsContainer.classList.add('hidden');
+            } else {
+                prevBtn.classList.remove('hidden');
+                nextBtn.classList.remove('hidden');
+                dotsContainer.classList.remove('hidden');
+
+                // Rigenera i pallini (Dots) inferiori
+                dotsContainer.innerHTML = '';
+                selectedProduct.images.forEach((img, idx) => {
+                    const dot = document.createElement('div');
+                    dot.className = `w-2 h-2 rounded-full transition-all duration-200 ${idx === currentSlideIndex ? 'bg-emerald-400 w-4' : 'bg-gray-600'}`;
+                    dotsContainer.appendChild(dot);
+                });
+            }
+        }
+
+        // Vai alla slide precedente
+        function prevImage() {
+            if (!selectedProduct) return;
+            currentSlideIndex = (currentSlideIndex - 1 + selectedProduct.images.length) % selectedProduct.images.length;
+            updateCarousel();
+        }
+
+        // Vai alla slide successiva
+        function nextImage() {
+            if (!selectedProduct) return;
+            currentSlideIndex = (currentSlideIndex + 1) % selectedProduct.images.length;
+            updateCarousel();
         }
 
         // Funzione di chiusura del Popup dettagli
@@ -181,20 +365,24 @@
             document.body.classList.remove('overflow-hidden');
         }
 
-        // Gestione grafica della selezione taglia nel popup
+        // Gestione grafica della selezione taglia nel popup (include XXS, XS, 2XL, 3XL!)
         function selectSize(size) {
             selectedSizeVal = size;
             
             document.querySelectorAll('.size-btn').forEach(btn => {
-                if(btn.textContent === size) {
-                    btn.className = "size-btn w-12 h-12 rounded-xl border-2 border-emerald-500 font-black flex items-center justify-center text-sm transition-all bg-emerald-500/10 text-emerald-400";
+                if (btn.textContent === size) {
+                    // Evidenzia visivamente il bottone premuto in verde smeraldo
+                    btn.className = "size-btn py-2.5 rounded-xl border-2 border-emerald-500 font-black flex items-center justify-center text-xs transition-all bg-emerald-500/10 text-emerald-400";
                 } else {
-                    btn.className = "size-btn w-12 h-12 rounded-xl border border-gray-800 hover:border-emerald-500 font-bold flex items-center justify-center text-sm transition-all bg-gray-950 text-white";
+                    btn.className = "size-btn py-2.5 rounded-xl border border-gray-800 hover:border-emerald-500 font-bold flex items-center justify-center text-xs transition-all bg-gray-950 text-white";
                 }
             });
+
+            // Aggiorna dinamicamente il testo del bottone d'ordine
+            document.getElementById('btn-order-text').textContent = `Ordina Taglia ${size} via WhatsApp`;
         }
 
-        // Genera il link d'ordine WhatsApp con testo precompilato e invia l'utente
+        // Genera il link d'ordine WhatsApp con testo precompilato e apre la chat
         function sendWhatsAppOrder() {
             if (!selectedProduct) return;
             
@@ -209,8 +397,40 @@
             message += `\nPrezzo: €${selectedProduct.price}`;
             message += `\n\nLink catalogo: ${window.location.origin}${window.location.pathname}`;
 
-            const waUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+            const waUrl = `https://wa.me/${CONFIG.whatsappNumber}?text=${encodeURIComponent(message)}`;
             window.open(waUrl, '_blank');
+        }
+
+        // ==========================================
+        //  GESTIONE GESTI SWIPE (PER CELLULARE)
+        // ==========================================
+        let touchStartX = 0;
+        let touchEndX = 0;
+        const sliderContainer = document.getElementById('modal-img-container');
+
+        sliderContainer.addEventListener('touchstart', function(e) {
+            touchStartX = e.changedTouches[0].screenX;
+        }, { passive: true });
+
+        sliderContainer.addEventListener('touchend', function(e) {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipeGesture();
+        }, { passive: true });
+
+        function handleSwipeGesture() {
+            // Controlla la distanza dello scorrimento del dito
+            const swipeDistance = touchStartX - touchEndX;
+            const threshold = 45; // Distanza minima in pixel per attivare lo scorrimento
+
+            if (selectedProduct && selectedProduct.images.length > 1) {
+                if (swipeDistance > threshold) {
+                    // Swipe verso sinistra -> immagine successiva
+                    nextImage();
+                } else if (swipeDistance < -threshold) {
+                    // Swipe verso destra -> immagine precedente
+                    prevImage();
+                }
+            }
         }
     </script>
 </body>
