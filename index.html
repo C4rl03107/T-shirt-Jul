@@ -53,10 +53,20 @@
                 <h1 class="text-3xl font-black tracking-tight text-white mt-1">JUL <span class="text-emerald-500">T-SHIRT</span></h1>
             </div>
             
-            <!-- Link di contatto rapido social -->
+            <!-- Link di contatto rapido social e icona Carrello -->
             <div class="flex items-center gap-5 text-gray-400">
-                <a id="insta-link" href="#" target="_blank" class="hover:text-pink-500 transition-colors text-2xl" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
-                <a id="wa-general" href="#" target="_blank" class="hover:text-emerald-400 transition-colors text-2xl" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+                <a id="insta-link" href="#" target="_blank" class="hover:text-pink-500 transition-colors text-2xl" aria-label="Instagram">
+                    <i class="fa-brands fa-instagram"></i>
+                </a>
+                <a id="wa-general" href="#" target="_blank" class="hover:text-emerald-400 transition-colors text-2xl" aria-label="WhatsApp">
+                    <i class="fa-brands fa-whatsapp"></i>
+                </a>
+                
+                <!-- Icona Carrello con badge numerico -->
+                <button onclick="toggleCart()" class="relative hover:text-emerald-400 transition-colors text-2xl p-1" aria-label="Apri Carrello">
+                    <i class="fa-solid fa-bag-shopping text-white"></i>
+                    <span id="cart-badge" class="absolute -top-1 -right-2 bg-emerald-500 text-black text-[10px] font-extrabold w-5 h-5 rounded-full flex items-center justify-center border-2 border-[#0b0f19] hidden">0</span>
+                </button>
             </div>
         </div>
     </header>
@@ -96,7 +106,7 @@
         
         <!-- Finestra centrale del popup -->
         <div class="bg-gray-900 border border-gray-800 rounded-3xl overflow-hidden max-w-lg w-full relative z-10 shadow-2xl animate-in fade-in zoom-in duration-200">
-            <button onclick="closeModal()" class="absolute top-4 right-4 bg-black/45 text-white hover:bg-black/85 w-10 h-10 rounded-full flex items-center justify-center transition-colors z-35">
+            <button onclick="closeModal()" class="absolute top-4 right-4 bg-black/45 text-white hover:bg-black/85 w-10 h-10 rounded-full flex items-center justify-center transition-colors z-30">
                 <i class="fa-solid fa-xmark text-lg"></i>
             </button>
             
@@ -106,11 +116,11 @@
                     <!-- Immagine corrente del carousel -->
                     <img id="modal-img" src="" alt="Dettaglio maglietta" class="max-h-full max-w-full object-contain select-none transition-all duration-300">
                     
-                    <!-- Pulsanti di Navigazione Carousel (Nascondibili via JS se c'è solo 1 immagine) -->
-                    <button id="carousel-prev" onclick="prevImage()" class="absolute left-3 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-emerald-500 hover:text-black text-white w-10 h-10 rounded-full flex items-center justify-center transition-all active:scale-90" aria-label="Immagine precedente">
+                    <!-- Pulsanti di Navigazione Carousel -->
+                    <button id="carousel-prev" onclick="prevImage()" class="absolute left-3 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-emerald-500 hover:text-black text-white w-10 h-10 rounded-full flex items-center justify-center transition-all active:scale-90 animate-fade-in" aria-label="Immagine precedente">
                         <i class="fa-solid fa-chevron-left text-sm"></i>
                     </button>
-                    <button id="carousel-next" onclick="nextImage()" class="absolute right-3 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-emerald-500 hover:text-black text-white w-10 h-10 rounded-full flex items-center justify-center transition-all active:scale-90" aria-label="Immagine successiva">
+                    <button id="carousel-next" onclick="nextImage()" class="absolute right-3 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-emerald-500 hover:text-black text-white w-10 h-10 rounded-full flex items-center justify-center transition-all active:scale-90 animate-fade-in" aria-label="Immagine successiva">
                         <i class="fa-solid fa-chevron-right text-sm"></i>
                     </button>
                     
@@ -127,7 +137,7 @@
                     <span class="text-xs bg-emerald-500/10 text-emerald-400 px-2.5 py-1 rounded-md font-semibold border border-emerald-500/10">Disponibile</span>
                 </div>
                 
-                <!-- Selezione facilitata delle Taglie (Griglia 4x2 fantastica per mobile) -->
+                <!-- Selezione facilitata delle Taglie (Griglia 4x2 ottimizzata per mobile) -->
                 <div class="mb-5">
                     <label class="block text-xs uppercase tracking-wider text-gray-400 font-bold mb-2">Seleziona Taglia</label>
                     <div class="grid grid-cols-4 gap-2" id="sizes-container">
@@ -142,19 +152,60 @@
                     </div>
                 </div>
                 
-                <!-- Bottone per completare l'ordine personalizzato tramite WhatsApp -->
-                <button id="modal-order-btn" onclick="sendWhatsAppOrder()" class="w-full bg-emerald-500 hover:bg-emerald-400 text-black font-extrabold py-4 rounded-2xl flex items-center justify-center gap-3 text-base shadow-lg shadow-emerald-500/20 transition-all transform active:scale-95">
-                    <i class="fa-brands fa-whatsapp text-xl"></i>
-                    <span id="btn-order-text">Ordina via WhatsApp</span>
-                </button>
+                <!-- Azioni d'Acquisto (Aggiungi o Ordina Subito) -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <button id="add-to-cart-btn" onclick="addToCart()" class="w-full bg-gray-850 hover:bg-gray-800 border border-gray-700 hover:border-emerald-500 text-white font-extrabold py-4 rounded-2xl flex items-center justify-center gap-3 text-base transition-all transform active:scale-95">
+                        <i class="fa-solid fa-cart-plus text-emerald-400"></i>
+                        Aggiungi al Carrello
+                    </button>
+                    <button id="modal-order-btn" onclick="sendWhatsAppOrder()" class="w-full bg-emerald-500 hover:bg-emerald-400 text-black font-extrabold py-4 rounded-2xl flex items-center justify-center gap-3 text-base shadow-lg shadow-emerald-500/20 transition-all transform active:scale-95">
+                        <i class="fa-brands fa-whatsapp text-xl"></i>
+                        <span id="btn-order-text">Ordina Subito</span>
+                    </button>
+                </div>
             </div>
         </div>
     </div>
 
+    <!-- PANEL DIORAMA CARRELLO (DRAWER LATERALE) -->
+    <div id="cart-drawer" class="fixed inset-y-0 right-0 z-50 w-full max-w-md bg-gray-950 border-l border-gray-800 shadow-2xl transform translate-x-full transition-transform duration-300 flex flex-col justify-between hidden">
+        <!-- Header Carrello -->
+        <div class="p-6 border-b border-gray-900 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <i class="fa-solid fa-bag-shopping text-emerald-400 text-xl"></i>
+                <h3 class="text-xl font-extrabold text-white">Il tuo Carrello</h3>
+            </div>
+            <button onclick="toggleCart()" class="text-gray-400 hover:text-white w-8 h-8 rounded-full bg-gray-900 flex items-center justify-center">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <!-- Lista Articoli Carrello -->
+        <div id="cart-items" class="p-6 flex-grow overflow-y-auto space-y-4">
+            <!-- Gli elementi inseriti compariranno qui -->
+        </div>
+
+        <!-- Footer Carrello con Riepilogo e Invio Ordine -->
+        <div class="p-6 border-t border-gray-900 bg-[#0b0f19]/90">
+            <div class="flex items-center justify-between mb-6">
+                <span class="text-sm text-gray-400 font-bold uppercase tracking-wider">Totale Provvisorio</span>
+                <span id="cart-total-price" class="text-2xl font-black text-emerald-400">€0,00</span>
+            </div>
+            <button onclick="sendWhatsAppBulkOrder()" class="w-full bg-emerald-500 hover:bg-emerald-400 text-black font-black py-4 rounded-2xl flex items-center justify-center gap-3 text-base shadow-lg shadow-emerald-500/20 transition-all transform active:scale-95">
+                <i class="fa-brands fa-whatsapp text-xl"></i>
+                Invia Ordine su WhatsApp
+            </button>
+            <p class="text-[10px] text-gray-500 text-center mt-3">L'ordine verrà inviato direttamente alla chat di JUL Streetwear per concordare pagamento e spedizione.</p>
+        </div>
+    </div>
+    
+    <!-- Sfondo scuro per il Drawer del Carrello -->
+    <div id="cart-backdrop" class="fixed inset-0 bg-black/60 z-40 hidden modal-backdrop" onclick="toggleCart()"></div>
+
     <!-- FOOTER -->
     <footer class="border-t border-gray-900 bg-gray-950 py-8 text-center text-sm text-gray-500">
         <p class="font-semibold text-gray-400">© 2026 JUL Streetwear. Tutti i diritti riservati.</p>
-        <p class="text-xs mt-1">Clicca sulle magliette per selezionare la taglia e ordinare subito su WhatsApp.</p>
+        <p class="text-xs mt-1">Clicca sulle magliette per selezionare la taglia, aggiungerle al carrello e ordinare subito su WhatsApp.</p>
     </footer>
 
     <!-- LOGICA DI GENERAZIONE E COMPORTAMENTO -->
@@ -163,46 +214,40 @@
         //  CONFIGURAZIONE SITO
         // ==========================================
         const CONFIG = {
-            whatsappNumber: "393286016570", // <-- Il tuo numero WhatsApp
-            instagramUser: "carlo.mezzotero", // <-- Il tuo account Instagram
-            price: "15,00",                   // <-- Prezzo fisso
-            totalProducts: 46                 // <-- Totale maglie (fino alla nuova 46!)
+            whatsappNumber: "393286016570", // Il tuo numero WhatsApp
+            instagramUser: "carlo.mezzotero", // Il tuo account Instagram
+            price: "15,00",                   // Prezzo fisso per maglietta
+            totalProducts: 46                 // Totale maglie nel catalogo
         };
 
         // ==========================================
         //  MAPPA IMMAGINI MULTIPLE (Fronte e Retro)
         // ==========================================
-        // Definiamo quali magliette hanno più di un'immagine associata con la tua nuova nomenclatura (A per davanti, D per dietro)
+        // Associazione fronte/retro per mostrare il carousel interattivo
         const MULTI_IMAGE_PRODUCTS = {
-            31: ["31A", "31D"],
-            33: ["33A", "33D"],
-            34: ["34A", "34D"],
+            31: ["31", "31D"],
+            33: ["33", "33D"],
+            34: ["34", "34D"],
             41: ["41A", "41D"],
             42: ["42A", "42D"]
         };
 
         // Lista degli ID da nascondere/escludere dalla griglia principale
-        // - Escludiamo la maglia 25 (che abbiamo eliminato)
-        // - Escludiamo la maglia 32 (perché la 31 usa ora 31A e 31D!)
         const EXCLUDED_IDS = new Set([25, 32]);
 
-        // Applicazione automatica dei dati configurati ai link di intestazione
+        // Applicazione automatica dei dati configurati
         document.getElementById('wa-general').href = `https://wa.me/${CONFIG.whatsappNumber}?text=Ciao!%20Ho%20visto%20il%20catalogo%20JUL%20T-SHIRT%20e%20vorrei%20informazioni.`;
         document.getElementById('insta-link').href = `https://instagram.com/${CONFIG.instagramUser}`;
         document.getElementById('modal-price').textContent = `€${CONFIG.price}`;
 
-        // Generazione dinamica dei prodotti
         const products = [];
         for (let i = 1; i <= CONFIG.totalProducts; i++) {
-            // Salta i modelli eliminati o integrati altrove (come il 25 e il 32)
             if (EXCLUDED_IDS.has(i)) continue;
 
             let productImages = [];
             if (MULTI_IMAGE_PRODUCTS[i]) {
-                // Se la maglia ha immagini multiple, prende i nomi definiti nella mappa (es. 31A, 31D)
                 productImages = MULTI_IMAGE_PRODUCTS[i].map(name => `Catalogo/${name}.jpeg`);
             } else {
-                // Altrimenti prende la foto singola standard (es. Catalogo/1.jpeg)
                 productImages = [`Catalogo/${i}.jpeg`];
             }
 
@@ -218,6 +263,7 @@
         let selectedProduct = null;
         let selectedSizeVal = null;
         let currentSlideIndex = 0;
+        let cart = []; // Array per contenere gli articoli nel carrello
 
         // Renderizza dinamicamente tutti i prodotti nella griglia principale
         function renderProducts(items) {
@@ -236,7 +282,6 @@
                 card.className = "group bg-gray-900/40 rounded-3xl border border-gray-800 overflow-hidden cursor-pointer hover:border-gray-700 transition-all duration-300 transform hover:-translate-y-1 shadow-md relative";
                 card.onclick = () => openModal(product);
                 
-                // Se il prodotto ha più di una foto, mostriamo un badge indicatore
                 const multiImageBadge = product.images.length > 1 
                     ? `<div class="absolute bottom-3 left-3 bg-black/75 backdrop-blur text-white text-[10px] font-bold px-2 py-1 rounded-lg border border-gray-800 flex items-center gap-1.5">
                             <i class="fa-solid fa-images"></i> ${product.images.length} Foto
@@ -268,7 +313,7 @@
         // Mostra a schermo l'intero catalogo all'inizio
         renderProducts(products);
 
-        // Funzione per filtrare i prodotti in tempo reale tramite la barra di ricerca
+        // Funzione per filtrare i prodotti tramite la barra di ricerca
         function filterProducts() {
             const query = document.getElementById('search-input').value.trim();
             if (query === '') {
@@ -276,7 +321,6 @@
                 return;
             }
             
-            // Filtra per ID numerico o per nome completo
             const filtered = products.filter(p => {
                 return p.id.toString() === query || p.name.toLowerCase().includes(query.toLowerCase());
             });
@@ -287,32 +331,24 @@
         //  LOGICA POPUP E SLIDER IMMAGINI (CAROUSEL)
         // ==========================================
 
-        // Funzione di apertura del Popup dettagli
         function openModal(product) {
             selectedProduct = product;
-            selectedSizeVal = null; // Resetta la taglia ad ogni nuova apertura
-            currentSlideIndex = 0;  // Riparte sempre dalla prima immagine
+            selectedSizeVal = null; 
+            currentSlideIndex = 0;  
             
-            // Ripristina l'aspetto iniziale non selezionato di tutti i pulsanti taglia
             document.querySelectorAll('.size-btn').forEach(btn => {
                 btn.className = "size-btn py-2.5 rounded-xl border border-gray-800 hover:border-emerald-500 font-bold flex items-center justify-center text-xs transition-all bg-gray-950 text-white";
             });
 
-            // Resetta il testo originale del bottone WhatsApp
-            document.getElementById('btn-order-text').textContent = "Ordina via WhatsApp";
-
-            // Imposta titolo del prodotto nel popup
+            document.getElementById('btn-order-text').textContent = "Ordina Subito";
             document.getElementById('modal-title').textContent = product.name;
             
-            // Aggiorna lo Slider con l'immagine corrente
             updateCarousel();
 
-            // Mostra il popup con un'animazione fluida
             document.getElementById('product-modal').classList.remove('hidden');
             document.body.classList.add('overflow-hidden');
         }
 
-        // Aggiorna l'immagine visibile all'interno del Modal e gestisce i controlli
         function updateCarousel() {
             if (!selectedProduct) return;
 
@@ -321,10 +357,8 @@
             const nextBtn = document.getElementById('carousel-next');
             const dotsContainer = document.getElementById('carousel-dots');
 
-            // Imposta la sorgente dell'immagine corrente
             imgElement.src = selectedProduct.images[currentSlideIndex];
 
-            // Se c'è solo 1 immagine, nascondi frecce e pallini indicatori
             if (selectedProduct.images.length <= 1) {
                 prevBtn.classList.add('hidden');
                 nextBtn.classList.add('hidden');
@@ -334,7 +368,6 @@
                 nextBtn.classList.remove('hidden');
                 dotsContainer.classList.remove('hidden');
 
-                // Rigenera i pallini (Dots) inferiori
                 dotsContainer.innerHTML = '';
                 selectedProduct.images.forEach((img, idx) => {
                     const dot = document.createElement('div');
@@ -344,45 +377,165 @@
             }
         }
 
-        // Vai alla slide precedente
         function prevImage() {
             if (!selectedProduct) return;
             currentSlideIndex = (currentSlideIndex - 1 + selectedProduct.images.length) % selectedProduct.images.length;
             updateCarousel();
         }
 
-        // Vai alla slide successiva
         function nextImage() {
             if (!selectedProduct) return;
             currentSlideIndex = (currentSlideIndex + 1) % selectedProduct.images.length;
             updateCarousel();
         }
 
-        // Funzione di chiusura del Popup dettagli
         function closeModal() {
             document.getElementById('product-modal').classList.add('hidden');
             document.body.classList.remove('overflow-hidden');
         }
 
-        // Gestione grafica della selezione taglia nel popup (include XXS, XS, 2XL, 3XL!)
         function selectSize(size) {
             selectedSizeVal = size;
             
             document.querySelectorAll('.size-btn').forEach(btn => {
                 if (btn.textContent === size) {
-                    // Evidenzia visivamente il bottone premuto in verde smeraldo
                     btn.className = "size-btn py-2.5 rounded-xl border-2 border-emerald-500 font-black flex items-center justify-center text-xs transition-all bg-emerald-500/10 text-emerald-400";
                 } else {
                     btn.className = "size-btn py-2.5 rounded-xl border border-gray-800 hover:border-emerald-500 font-bold flex items-center justify-center text-xs transition-all bg-gray-950 text-white";
                 }
             });
 
-            // Aggiorna dinamicamente il testo del bottone d'ordine
-            document.getElementById('btn-order-text').textContent = `Ordina Taglia ${size} via WhatsApp`;
+            document.getElementById('btn-order-text').textContent = `Ordina Taglia ${size}`;
         }
 
-        // Genera il link d'ordine WhatsApp con testo precompilato e apre la chat
-        // Include un link specifico per mostrare l'immagine al venditore!
+        // ==========================================
+        //  LOGICA DEL CARRELLO DELLA SPESA (NEW)
+        // ==========================================
+
+        function toggleCart() {
+            const drawer = document.getElementById('cart-drawer');
+            const backdrop = document.getElementById('cart-backdrop');
+            
+            if (drawer.classList.contains('hidden')) {
+                drawer.classList.remove('hidden');
+                backdrop.classList.remove('hidden');
+                setTimeout(() => {
+                    drawer.classList.remove('translate-x-full');
+                }, 10);
+            } else {
+                drawer.classList.add('translate-x-full');
+                backdrop.classList.add('hidden');
+                setTimeout(() => {
+                    drawer.classList.add('hidden');
+                }, 300);
+            }
+        }
+
+        // Aggiunge un elemento al carrello
+        function addToCart() {
+            if (!selectedProduct) return;
+            
+            if (!selectedSizeVal) {
+                // Notifica personalizzata carina anziché il banale alert
+                const alertBanner = document.createElement('div');
+                alertBanner.className = "fixed top-20 left-1/2 -translate-x-1/2 bg-rose-600 text-white font-extrabold px-6 py-3.5 rounded-2xl z-[999] shadow-xl text-sm animate-bounce";
+                alertBanner.textContent = "Seleziona prima una taglia!";
+                document.body.appendChild(alertBanner);
+                setTimeout(() => alertBanner.remove(), 2500);
+                return;
+            }
+
+            // Controlliamo se quell'articolo con quella specifica taglia è già nel carrello
+            const existingItem = cart.find(item => item.id === selectedProduct.id && item.size === selectedSizeVal);
+            
+            if (existingItem) {
+                existingItem.qty += 1;
+            } else {
+                cart.push({
+                    id: selectedProduct.id,
+                    name: selectedProduct.name,
+                    image: selectedProduct.images[0],
+                    size: selectedSizeVal,
+                    price: parseFloat(selectedProduct.price.replace(',', '.')),
+                    qty: 1
+                });
+            }
+
+            updateCartUI();
+            closeModal();
+            toggleCart(); // Apri automaticamente il carrello per feedback visivo
+        }
+
+        // Rimuove un articolo o riduce la quantità
+        function updateQty(id, size, change) {
+            const item = cart.find(i => i.id === id && i.size === size);
+            if (!item) return;
+
+            item.qty += change;
+            if (item.qty <= 0) {
+                cart = cart.filter(i => !(i.id === id && i.size === size));
+            }
+            updateCartUI();
+        }
+
+        // Aggiorna l'interfaccia grafica del carrello (totale, contatore, lista)
+        function updateCartUI() {
+            const badge = document.getElementById('cart-badge');
+            const container = document.getElementById('cart-items');
+            const totalText = document.getElementById('cart-total-price');
+
+            // Calcolo totale pezzi
+            const totalQty = cart.reduce((acc, curr) => acc + curr.qty, 0);
+            if (totalQty > 0) {
+                badge.textContent = totalQty;
+                badge.classList.remove('hidden');
+            } else {
+                badge.classList.add('hidden');
+            }
+
+            // Calcolo prezzo totale
+            const totalPrice = cart.reduce((acc, curr) => acc + (curr.price * curr.qty), 0);
+            totalText.textContent = `€${totalPrice.toFixed(2).replace('.', ',')}`;
+
+            // Svuota e rigenera la lista nel carrello
+            container.innerHTML = '';
+            
+            if (cart.length === 0) {
+                container.innerHTML = `
+                    <div class="h-full flex flex-col items-center justify-center text-gray-500 py-12">
+                        <i class="fa-solid fa-bag-shopping text-5xl mb-3 text-gray-800"></i>
+                        <p class="font-bold text-center">Il carrello è vuoto</p>
+                        <p class="text-xs text-center mt-1">Aggiungi dei modelli per procedere.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            cart.forEach(item => {
+                const itemDiv = document.createElement('div');
+                itemDiv.className = "flex items-center gap-4 bg-gray-900/60 p-3 rounded-2xl border border-gray-900";
+                itemDiv.innerHTML = `
+                    <img src="${item.image}" alt="${item.name}" class="w-16 h-16 object-cover rounded-xl bg-black">
+                    <div class="flex-grow">
+                        <h4 class="font-extrabold text-sm text-white">${item.name}</h4>
+                        <p class="text-xs text-emerald-400 font-bold mt-0.5">Taglia ${item.size} • €15,00</p>
+                        
+                        <div class="flex items-center gap-2 mt-2">
+                            <button onclick="updateQty(${item.id}, '${item.size}', -1)" class="w-6 h-6 rounded bg-gray-850 text-white flex items-center justify-center hover:bg-gray-800 text-xs">
+                                <i class="fa-solid fa-minus"></i>
+                            </button>
+                            <span class="text-xs font-bold w-5 text-center text-white">${item.qty}</span>
+                            <button onclick="updateQty(${item.id}, '${item.size}', 1)" class="w-6 h-6 rounded bg-gray-850 text-white flex items-center justify-center hover:bg-gray-800 text-xs">
+                                <i class="fa-solid fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(itemDiv);
+            });
+        }
+
+        // Genera l'ordine di singola maglia (Direct Checkout)
         function sendWhatsAppOrder() {
             if (!selectedProduct) return;
             
@@ -396,6 +549,24 @@
             
             message += `\nPrezzo: €${selectedProduct.price}`;
             message += `\n\nLink catalogo: ${window.location.origin}${window.location.pathname}`;
+
+            const waUrl = `https://wa.me/${CONFIG.whatsappNumber}?text=${encodeURIComponent(message)}`;
+            window.open(waUrl, '_blank');
+        }
+
+        // Genera il super messaggio per l'ordine di più articoli (Carrello)
+        function sendWhatsAppBulkOrder() {
+            if (cart.length === 0) return;
+
+            let message = `Ciao! Vorrei completare un ordine con i seguenti articoli:\n\n`;
+            
+            cart.forEach(item => {
+                message += `▪️ *${item.name}* (Modello #${item.id})\n   Quantità: ${item.qty} | Taglia: *${item.size}*\n   Prezzo: €${(item.price * item.qty).toFixed(2).replace('.', ',')}\n\n`;
+            });
+
+            const total = cart.reduce((acc, curr) => acc + (curr.price * curr.qty), 0);
+            message += `💰 *Totale complessivo: €${total.toFixed(2).replace('.', ',')}*\n\n`;
+            message += ` Grazie!`;
 
             const waUrl = `https://wa.me/${CONFIG.whatsappNumber}?text=${encodeURIComponent(message)}`;
             window.open(waUrl, '_blank');
@@ -418,16 +589,13 @@
         }, { passive: true });
 
         function handleSwipeGesture() {
-            // Controlla la distanza dello scorrimento del dito
             const swipeDistance = touchStartX - touchEndX;
-            const threshold = 45; // Distanza minima in pixel per attivare lo scorrimento
+            const threshold = 45; 
 
             if (selectedProduct && selectedProduct.images.length > 1) {
                 if (swipeDistance > threshold) {
-                    // Swipe verso sinistra -> immagine successiva
                     nextImage();
                 } else if (swipeDistance < -threshold) {
-                    // Swipe verso destra -> immagine precedente
                     prevImage();
                 }
             }
