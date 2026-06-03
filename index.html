@@ -9,7 +9,7 @@
     <!-- Google Fonts per un look streetwear accattivante -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=300;400;600;800&display=swap" rel="stylesheet">
     <!-- Icone FontAwesome per i bottoni social e navigazione -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
@@ -24,7 +24,7 @@
         .modal-backdrop {
             backdrop-filter: blur(8px);
         }
-        /* Rimuove l'outline brutto sui pulsanti */
+        /* Rimuove l'outline sui pulsanti */
         button:focus {
             outline: none;
         }
@@ -90,7 +90,35 @@
     <!-- GRIGLIA PRODOTTI -->
     <main class="max-w-7xl mx-auto px-4 py-8 flex-grow w-full">
         <div id="products-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
-            <!-- I prodotti verranno generati automaticamente via Javascript qui dentro -->
+            <!-- Skeleton Loader temporaneo che sparisce all'avvio dello Scanner -->
+            <div class="animate-pulse bg-gray-900/20 rounded-3xl border border-gray-900 p-4 h-80 flex flex-col justify-between">
+                <div class="bg-gray-900/60 h-2/3 rounded-2xl w-full"></div>
+                <div class="space-y-3 mt-4">
+                    <div class="h-4 bg-gray-900/60 rounded w-2/3"></div>
+                    <div class="h-3 bg-gray-900/60 rounded w-1/2"></div>
+                </div>
+            </div>
+            <div class="animate-pulse bg-gray-900/20 rounded-3xl border border-gray-900 p-4 h-80 flex flex-col justify-between">
+                <div class="bg-gray-900/60 h-2/3 rounded-2xl w-full"></div>
+                <div class="space-y-3 mt-4">
+                    <div class="h-4 bg-gray-900/60 rounded w-2/3"></div>
+                    <div class="h-3 bg-gray-900/60 rounded w-1/2"></div>
+                </div>
+            </div>
+            <div class="animate-pulse bg-gray-900/20 rounded-3xl border border-gray-900 p-4 h-80 flex flex-col justify-between">
+                <div class="bg-gray-900/60 h-2/3 rounded-2xl w-full"></div>
+                <div class="space-y-3 mt-4">
+                    <div class="h-4 bg-gray-900/60 rounded w-2/3"></div>
+                    <div class="h-3 bg-gray-900/60 rounded w-1/2"></div>
+                </div>
+            </div>
+            <div class="animate-pulse bg-gray-900/20 rounded-3xl border border-gray-900 p-4 h-80 flex flex-col justify-between">
+                <div class="bg-gray-900/60 h-2/3 rounded-2xl w-full"></div>
+                <div class="space-y-3 mt-4">
+                    <div class="h-4 bg-gray-900/60 rounded w-2/3"></div>
+                    <div class="h-3 bg-gray-900/60 rounded w-1/2"></div>
+                </div>
+            </div>
         </div>
         <!-- Messaggio di nessun risultato nella ricerca -->
         <div id="no-results" class="hidden text-center py-12 text-gray-500">
@@ -111,8 +139,8 @@
             </button>
             
             <div class="p-5 sm:p-6">
-                <!-- Immagine/Carousel del popup -->
-                <div id="modal-img-container" class="aspect-square w-full rounded-2xl overflow-hidden bg-black flex items-center justify-center mb-5 relative group">
+                <!-- Immagine/Carousel del popup con supporto Touch Swipe -->
+                <div id="modal-img-container" class="aspect-square w-full rounded-2xl overflow-hidden bg-black flex items-center justify-center mb-5 relative group cursor-grab active:cursor-grabbing">
                     <!-- Immagine corrente del carousel -->
                     <img id="modal-img" src="" alt="Dettaglio maglietta" class="max-h-full max-w-full object-contain select-none transition-all duration-300">
                     
@@ -137,7 +165,7 @@
                     <span class="text-xs bg-emerald-500/10 text-emerald-400 px-2.5 py-1 rounded-md font-semibold border border-emerald-500/10">Disponibile</span>
                 </div>
                 
-                <!-- Selezione facilitata delle Taglie (Griglia 4x2 ottimizzata per mobile) -->
+                <!-- Selezione facilitata delle Taglie (Griglia ottimizzata per mobile con 8 taglie) -->
                 <div class="mb-5">
                     <label class="block text-xs uppercase tracking-wider text-gray-400 font-bold mb-2">Seleziona Taglia</label>
                     <div class="grid grid-cols-4 gap-2" id="sizes-container">
@@ -217,19 +245,7 @@
             whatsappNumber: "393286016570", // Il tuo numero WhatsApp
             instagramUser: "carlo.mezzotero", // Il tuo account Instagram
             price: "15,00",                   // Prezzo fisso per maglietta
-            totalProducts: 46                 // Totale maglie nel catalogo
-        };
-
-        // ==========================================
-        //  MAPPA IMMAGINI MULTIPLE (Fronte e Retro)
-        // ==========================================
-        // Associazione fronte/retro per mostrare il carousel interattivo
-        const MULTI_IMAGE_PRODUCTS = {
-            31: ["31", "31D"],
-            33: ["33", "33D"],
-            34: ["34", "34D"],
-            41: ["41A", "41D"],
-            42: ["42A", "42D"]
+            totalProducts: 46                 // Totale maglie nel catalogo (puoi aumentarlo qui in futuro!)
         };
 
         // Lista degli ID da nascondere/escludere dalla griglia principale
@@ -240,32 +256,92 @@
         document.getElementById('insta-link').href = `https://instagram.com/${CONFIG.instagramUser}`;
         document.getElementById('modal-price').textContent = `€${CONFIG.price}`;
 
-        const products = [];
-        for (let i = 1; i <= CONFIG.totalProducts; i++) {
-            if (EXCLUDED_IDS.has(i)) continue;
-
-            let productImages = [];
-            if (MULTI_IMAGE_PRODUCTS[i]) {
-                productImages = MULTI_IMAGE_PRODUCTS[i].map(name => `Catalogo/${name}.jpeg`);
-            } else {
-                productImages = [`Catalogo/${i}.jpeg`];
-            }
-
-            products.push({
-                id: i,
-                name: `T-Shirt JUL #${i}`,
-                images: productImages,
-                price: CONFIG.price
-            });
-        }
-
         // Variabili globali di stato
+        let products = [];
         let selectedProduct = null;
         let selectedSizeVal = null;
         let currentSlideIndex = 0;
         let cart = []; // Array per contenere gli articoli nel carrello
 
-        // Renderizza dinamicamente tutti i prodotti nella griglia principale
+        // ==========================================
+        //  SCANNER AUTOMATICO IMMAGINI (A e D)
+        // ==========================================
+        async function checkImageExists(url) {
+            try {
+                const response = await fetch(url, { method: 'HEAD' });
+                return response.ok;
+            } catch (e) {
+                return false;
+            }
+        }
+
+        // Trova il primo file valido tra una lista di candidati in parallelo (veloce ed immune a maiuscole/minuscole)
+        async function getFirstExistingImage(urls) {
+            const checks = urls.map(async url => {
+                const exists = await checkImageExists(url);
+                return { url, exists };
+            });
+            const results = await Promise.all(checks);
+            const found = results.find(r => r.exists);
+            return found ? found.url : null;
+        }
+
+        async function scanAndBuildCatalog() {
+            const scanPromises = [];
+            const basePath = 'Catalogo';
+
+            for (let i = 1; i <= CONFIG.totalProducts; i++) {
+                if (EXCLUDED_IDS.has(i)) continue;
+
+                scanPromises.push((async () => {
+                    // Candidati per il Fronte (Avanti)
+                    const frontCandidates = [
+                        `${basePath}/${i}A.jpeg`, `${basePath}/${i}a.jpeg`,
+                        `${basePath}/${i}A.jpg`, `${basePath}/${i}a.jpg`,
+                        `${basePath}/${i}.jpeg`, `${basePath}/${i}.jpg`
+                    ];
+
+                    // Candidati per il Retro (Dietro)
+                    const backCandidates = [
+                        `${basePath}/${i}D.jpeg`, `${basePath}/${i}d.jpeg`,
+                        `${basePath}/${i}D.jpg`, `${basePath}/${i}d.jpg`
+                    ];
+
+                    // Cerchiamo le immagini reali presenti sul server
+                    const frontUrl = await getFirstExistingImage(frontCandidates);
+                    const backUrl = await getFirstExistingImage(backCandidates);
+                    
+                    let productImages = [];
+
+                    if (frontUrl && backUrl) {
+                        // Rilevate entrambe le foto (avanti e dietro, indipendentemente dalle maiuscole/minuscole)
+                        productImages = [frontUrl, backUrl];
+                    } else if (frontUrl) {
+                        // Rilevato solo l'avanti (o la foto singola normale)
+                        productImages = [frontUrl];
+                    } else {
+                        // Fallback assoluto
+                        productImages = [`${basePath}/${i}.jpeg`];
+                    }
+
+                    return {
+                        id: i,
+                        name: `T-Shirt JUL #${i}`,
+                        images: productImages,
+                        price: CONFIG.price
+                    };
+                })());
+            }
+
+            // Aspettiamo la scansione asincrona parallela e ordiniamo i risultati per ID
+            const scannedProducts = await Promise.all(scanPromises);
+            products = scannedProducts.filter(p => p !== null).sort((a, b) => a.id - b.id);
+            
+            // Rendering del catalogo con i veri prodotti scansionati
+            renderProducts(products);
+        }
+
+        // Renderizza dinamicamente tutti i prodotti scansionati nella griglia principale
         function renderProducts(items) {
             const grid = document.getElementById('products-grid');
             const noResults = document.getElementById('no-results');
@@ -273,6 +349,7 @@
             
             if (items.length === 0) {
                 noResults.classList.remove('hidden');
+                return;
             } else {
                 noResults.classList.add('hidden');
             }
@@ -282,6 +359,7 @@
                 card.className = "group bg-gray-900/40 rounded-3xl border border-gray-800 overflow-hidden cursor-pointer hover:border-gray-700 transition-all duration-300 transform hover:-translate-y-1 shadow-md relative";
                 card.onclick = () => openModal(product);
                 
+                // Mostra un piccolo badge grafico se rileva lo slider con doppia immagine
                 const multiImageBadge = product.images.length > 1 
                     ? `<div class="absolute bottom-3 left-3 bg-black/75 backdrop-blur text-white text-[10px] font-bold px-2 py-1 rounded-lg border border-gray-800 flex items-center gap-1.5">
                             <i class="fa-solid fa-images"></i> ${product.images.length} Foto
@@ -310,10 +388,7 @@
             });
         }
 
-        // Mostra a schermo l'intero catalogo all'inizio
-        renderProducts(products);
-
-        // Funzione per filtrare i prodotti tramite la barra di ricerca
+        // Filtro di ricerca per ID o nome
         function filterProducts() {
             const query = document.getElementById('search-input').value.trim();
             if (query === '') {
@@ -328,14 +403,14 @@
         }
 
         // ==========================================
-        //  LOGICA POPUP E SLIDER IMMAGINI (CAROUSEL)
+        //  LOGICA POPUP E CAROUSEL SLIDER CON TOUCH
         // ==========================================
-
         function openModal(product) {
             selectedProduct = product;
             selectedSizeVal = null; 
             currentSlideIndex = 0;  
             
+            // Ripristina l'aspetto originale dei bottoni taglia
             document.querySelectorAll('.size-btn').forEach(btn => {
                 btn.className = "size-btn py-2.5 rounded-xl border border-gray-800 hover:border-emerald-500 font-bold flex items-center justify-center text-xs transition-all bg-gray-950 text-white";
             });
@@ -389,6 +464,41 @@
             updateCarousel();
         }
 
+        // Supporto gesti Touch Swipe per telefoni (Scorri con le dita!)
+        let touchStartX = 0;
+        let touchEndX = 0;
+        const imgContainer = document.getElementById('modal-img-container');
+
+        imgContainer.addEventListener('touchstart', e => {
+            touchStartX = e.changedTouches[0].screenX;
+        }, { passive: true });
+
+        imgContainer.addEventListener('touchend', e => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipeGesture();
+        }, { passive: true });
+
+        function handleSwipeGesture() {
+            if (selectedProduct && selectedProduct.images.length > 1) {
+                if (touchEndX < touchStartX - 40) {
+                    nextImage(); // Swipe verso sinistra -> immagine successiva
+                }
+                if (touchEndX > touchStartX + 40) {
+                    prevImage(); // Swipe verso destra -> immagine precedente
+                }
+            }
+        }
+
+        // Supporto freccette tastiera del computer
+        document.addEventListener('keydown', function(e) {
+            const modal = document.getElementById('product-modal');
+            if (modal && !modal.classList.contains('hidden')) {
+                if (e.key === 'ArrowLeft') prevImage();
+                if (e.key === 'ArrowRight') nextImage();
+                if (e.key === 'Escape') closeModal();
+            }
+        });
+
         function closeModal() {
             document.getElementById('product-modal').classList.add('hidden');
             document.body.classList.remove('overflow-hidden');
@@ -409,9 +519,8 @@
         }
 
         // ==========================================
-        //  LOGICA DEL CARRELLO DELLA SPESA (NEW)
+        //  LOGICA DEL CARRELLO DELLA SPESA
         // ==========================================
-
         function toggleCart() {
             const drawer = document.getElementById('cart-drawer');
             const backdrop = document.getElementById('cart-backdrop');
@@ -431,12 +540,11 @@
             }
         }
 
-        // Aggiunge un elemento al carrello
         function addToCart() {
             if (!selectedProduct) return;
             
             if (!selectedSizeVal) {
-                // Notifica personalizzata carina anziché il banale alert
+                // Notifica a comparsa elegante in alto
                 const alertBanner = document.createElement('div');
                 alertBanner.className = "fixed top-20 left-1/2 -translate-x-1/2 bg-rose-600 text-white font-extrabold px-6 py-3.5 rounded-2xl z-[999] shadow-xl text-sm animate-bounce";
                 alertBanner.textContent = "Seleziona prima una taglia!";
@@ -445,7 +553,6 @@
                 return;
             }
 
-            // Controlliamo se quell'articolo con quella specifica taglia è già nel carrello
             const existingItem = cart.find(item => item.id === selectedProduct.id && item.size === selectedSizeVal);
             
             if (existingItem) {
@@ -466,7 +573,6 @@
             toggleCart(); // Apri automaticamente il carrello per feedback visivo
         }
 
-        // Rimuove un articolo o riduce la quantità
         function updateQty(id, size, change) {
             const item = cart.find(i => i.id === id && i.size === size);
             if (!item) return;
@@ -478,13 +584,11 @@
             updateCartUI();
         }
 
-        // Aggiorna l'interfaccia grafica del carrello (totale, contatore, lista)
         function updateCartUI() {
             const badge = document.getElementById('cart-badge');
             const container = document.getElementById('cart-items');
             const totalText = document.getElementById('cart-total-price');
 
-            // Calcolo totale pezzi
             const totalQty = cart.reduce((acc, curr) => acc + curr.qty, 0);
             if (totalQty > 0) {
                 badge.textContent = totalQty;
@@ -493,11 +597,9 @@
                 badge.classList.add('hidden');
             }
 
-            // Calcolo prezzo totale
             const totalPrice = cart.reduce((acc, curr) => acc + (curr.price * curr.qty), 0);
             totalText.textContent = `€${totalPrice.toFixed(2).replace('.', ',')}`;
 
-            // Svuota e rigenera la lista nel carrello
             container.innerHTML = '';
             
             if (cart.length === 0) {
@@ -554,52 +656,30 @@
             window.open(waUrl, '_blank');
         }
 
-        // Genera il super messaggio per l'ordine di più articoli (Carrello)
+        // Genera l'ordine cumulativo del Carrello spesa
         function sendWhatsAppBulkOrder() {
             if (cart.length === 0) return;
 
-            let message = `Ciao! Vorrei completare un ordine con i seguenti articoli:\n\n`;
+            let message = `Ciao! 🔥 Vorrei completare un ordine con i seguenti articoli:\n\n`;
             
-            cart.forEach(item => {
-                message += `▪️ *${item.name}* (Modello #${item.id})\n   Quantità: ${item.qty} | Taglia: *${item.size}*\n   Prezzo: €${(item.price * item.qty).toFixed(2).replace('.', ',')}\n\n`;
+            cart.forEach((item, index) => {
+                message += `▪️ *${item.name}* (Modello #${item.id})\n`;
+                message += `   Quantità: ${item.qty} | Taglia: *${item.size}*\n`;
+                message += `   Prezzo totale: €${(item.price * item.qty).toFixed(2).replace('.', ',')}\n\n`;
             });
 
-            const total = cart.reduce((acc, curr) => acc + (curr.price * curr.qty), 0);
-            message += `💰 *Totale complessivo: €${total.toFixed(2).replace('.', ',')}*\n\n`;
-            message += ` Grazie!`;
+            const totalPrice = cart.reduce((acc, curr) => acc + (curr.price * curr.qty), 0);
+            message += `💰 *Totale complessivo: €${totalPrice.toFixed(2).replace('.', ',')}*\n\n`;
+            message += `' Grazie!`;
 
             const waUrl = `https://wa.me/${CONFIG.whatsappNumber}?text=${encodeURIComponent(message)}`;
             window.open(waUrl, '_blank');
         }
 
-        // ==========================================
-        //  GESTIONE GESTI SWIPE (PER CELLULARE)
-        // ==========================================
-        let touchStartX = 0;
-        let touchEndX = 0;
-        const sliderContainer = document.getElementById('modal-img-container');
-
-        sliderContainer.addEventListener('touchstart', function(e) {
-            touchStartX = e.changedTouches[0].screenX;
-        }, { passive: true });
-
-        sliderContainer.addEventListener('touchend', function(e) {
-            touchEndX = e.changedTouches[0].screenX;
-            handleSwipeGesture();
-        }, { passive: true });
-
-        function handleSwipeGesture() {
-            const swipeDistance = touchStartX - touchEndX;
-            const threshold = 45; 
-
-            if (selectedProduct && selectedProduct.images.length > 1) {
-                if (swipeDistance > threshold) {
-                    nextImage();
-                } else if (swipeDistance < -threshold) {
-                    prevImage();
-                }
-            }
-        }
+        // Avvia la scansione dinamica all'avvio del sito
+        window.onload = function () {
+            scanAndBuildCatalog();
+        };
     </script>
 </body>
 </html>
